@@ -7,6 +7,8 @@ license = "GNU GPL v3.0"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+ask-lang = "^1.4.4"
+DateTime = "^4.3"
 
 [tool.poetry.dev-dependencies]
 

@@ -1,2 +1,2 @@
 [cors]
-origins = ['http://localhost']
+origins = ['https://localhost:5000']
