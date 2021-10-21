@@ -1,1 +1,39 @@
-@post('')
+&basic
+db_model Log:
+	text = db.col(db.str)
+	type = db.col(db.str)
+	origin = db.col(db.str)
+	date_time = db.col(db.datetime)
+	session = db.col(db.int)
+
+def add_log(log, type, origin, session):
+	try:
+		new_log = Log(log, type, origin, datetime.now(), session)
+		db.add(new_log)
+	except Exception:
+		return 500, None
+
+	return 200, new_log.s()['id']
+
+@post('/log/<type>'):
+	allowed_types = ['debug', 'warning', 'error', 'info']
+
+	if type not in allowed_types:
+		status('Non allowed type. "' + type + '" not in: ' + str(allowed_types), 400)
+
+	if require_keys(['text', 'session'], req):
+		status('"text" and "session" is required', 400)
+
+	status, id = add_log(req['text'], type, request.remote_addr, req['session'])
+
+	if id:
+		respond({id: id})
+
+	status(status)
+
+@get('/logs'):
+	respond(serialize(Log.db.all()))
+
+@get('/log/<id>'):
+	log = Log.db.get(id)
+	respond(log.s())
